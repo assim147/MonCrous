@@ -1,0 +1,92 @@
+{% extends "base.html.twig" %}
+
+{% load static %}
+{% load modulo %}
+
+{% block title %}
+	{{ block.super }}{% if title %}, {{ title }}{% endif %}
+{% endblock %}
+
+{% block body_top %}
+
+	<div id="modal-to-add" class="reveal-modal" data-reveal>
+  		<h2>Mon CROUS,</h2>
+  		
+	  	<form action="{% url "main.home" %}" method="post">
+			{% csrf_token %}
+			{{ form.as_p }}
+			
+			<input class="button" type="submit" value="Poster" />
+		</form>
+  		<a class="close-reveal-modal">&#215;</a>
+	</div>
+
+{% endblock %}
+
+{% block content %}
+
+	<div id="big-element">
+		<div id="big-content">
+		
+		</div>
+		<div class="icon-bar three-up">
+			<a class="item share-button" data-share="facebook">
+				<i class="fi-social-facebook"></i>
+			</a>
+			<a class="item share-button" data-share="google">
+				<i class="fi-social-google-plus"></i>
+			</a>
+			<a class="item share-button" data-share="twitter">
+				<i class="fi-social-twitter"></i>
+			</a>
+		</div>
+	</div>
+
+	<section id="main-section" class="main-section">	
+		<table id="main-table" class="main-table">		
+			{% for data in datas %}
+
+				{% if forloop.counter0 == 0 %}
+					<tr>
+				{% elif forloop.counter0 == datas.count %}
+					</tr>
+				{% elif forloop.counter0|modulo:10 == 0 %}
+					</tr>
+					<tr>
+				{% endif %} 
+				
+
+				{% if data.show %}
+					{% if data.add %}
+						<td class="add">
+							<p>
+								<a href="#" data-reveal-id="modal-to-add" class="open-modal">
+									<img src="{% static "img/plus" %}{{ data.color }}.png" title="Ajouter ma contribution" alt="Ajouter ma contribution" />
+								</a>
+							</p>
+						</td>
+					{% elif forloop.counter0 == 3 %}
+						<td class="double iframe" rowspan="2" colspan="2">
+							<div id="iframe">
+								<p><b>Plus c’est Local, Plus c’est Universel</b></p>
+								<iframe width="100%" height="200px" src="//www.youtube.com/embed/nR8MwAsMy-s" frameborder="0" allowfullscreen></iframe>
+							</div>
+						</td>
+					{% else %}
+						<td{% if data.double %} class="double" rowspan="2" colspan="2"{% endif %}>
+							<p data-url="http://{{ request.get_host }}{% url 'main.home.title' data.id %}">
+								<span>
+									<b class="motif">Mon CROUS</b>,<br />
+									<b class="unique {{ data.font }}" style="color: #{{ data.color }};">{{ data.text }}</b>
+								</span>	
+							</p>
+						</td>
+					{% endif %}	
+				{% endif %}
+
+			{% endfor %}
+			
+		</table>
+	</section>
+
+{% endblock %}
